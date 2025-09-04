@@ -74,6 +74,8 @@
         animation: pop 0.5s forwards;
         cursor: pointer;
         transition: transform 0.3s, box-shadow 0.3s;
+        position: relative;
+        overflow: hidden;
     }
 
     .card:hover {
@@ -105,30 +107,51 @@
         0% { transform: translateY(0) rotate(0deg); opacity: 1; }
         100% { transform: translateY(-400px) rotate(360deg); opacity: 0; }
     }
+
+    /* 卡片点击闪光 */
+    .flash {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: radial-gradient(circle, rgba(212,175,55,0.6) 0%, rgba(212,175,55,0) 70%);
+        border-radius: 15px;
+        pointer-events: none;
+        opacity: 0;
+        animation: flashAnim 0.5s forwards;
+    }
+
+    @keyframes flashAnim {
+        0% { opacity: 0; transform: scale(0.5); }
+        50% { opacity: 1; transform: scale(1.2); }
+        100% { opacity: 0; transform: scale(1); }
+    }
 </style>
 </head>
 <body>
 <h1>许祭的随机音MAD(破解无敌版）</h1>
 <p>点击抽卡抽取十个随机音MAD</p>
-<button id="openSites">抽卡</button>
+<button id="openSites">抽卡!</button>
 <div id="cardsContainer" class="cards-container"></div>
 
 <script>
 const notes = ['♪','♫','♬','♩'];
 
-function createNote() {
+function createNote(x, y) {
     const note = document.createElement('div');
     note.className = 'note';
     note.innerText = notes[Math.floor(Math.random() * notes.length)];
-    note.style.left = Math.random() * window.innerWidth + 'px';
+    note.style.left = x + 'px';
+    note.style.top = y + 'px';
     note.style.fontSize = 12 + Math.random() * 18 + 'px';
-    note.style.animationDuration = 2 + Math.random() * 2 + 's';
+    note.style.animationDuration = 1.5 + Math.random() * 1.5 + 's';
     document.body.appendChild(note);
-    setTimeout(() => { note.remove(); }, 5000);
+    setTimeout(() => { note.remove(); }, 2000);
 }
 
-// 音符粒子持续生成
-setInterval(createNote, 300);
+// 背景音符粒子
+setInterval(() => {
+    createNote(Math.random() * window.innerWidth, window.innerHeight);
+}, 400);
 
 window.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('openSites');
@@ -148,8 +171,23 @@ window.addEventListener('DOMContentLoaded', () => {
                         card.className = 'card';
                         card.title = random_site;
 
-                        // 点击卡片打开网页
-                        card.addEventListener('click', () => {
+                        // 点击卡片效果
+                        card.addEventListener('click', (e) => {
+                            // 闪光效果
+                            const flash = document.createElement('div');
+                            flash.className = 'flash';
+                            card.appendChild(flash);
+                            setTimeout(() => flash.remove(), 500);
+
+                            // 爆炸音符效果
+                            for(let j=0;j<5;j++){
+                                createNote(
+                                    card.offsetLeft + Math.random()*card.offsetWidth,
+                                    card.offsetTop + Math.random()*card.offsetHeight
+                                );
+                            }
+
+                            // 打开网页
                             window.open(random_site, '_blank');
                         });
 
