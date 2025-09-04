@@ -2,15 +2,14 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>许祭的随机音MAD（无敌版）</title>
+<title>许祭的抽卡</title>
 <style>
-    /* 页面整体样式 */
     body {
         margin: 0;
         padding: 0;
         font-family: 'Georgia', serif;
-        background: linear-gradient(180deg, #1a1a1a, #2b2b2b); /* 深色背景 */
-        color: #d4af37; /* 金色文字 */
+        background: linear-gradient(180deg, #1a1a1a, #2b2b2b);
+        color: #d4af37;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -30,7 +29,7 @@
     p {
         font-size: 1.2em;
         margin-bottom: 20px;
-        color: #f5deb3; /* 暖金色，咖啡感 */
+        color: #f5deb3;
         text-shadow: 0 0 3px rgba(255, 255, 255, 0.2);
     }
 
@@ -39,7 +38,7 @@
         font-size: 1.3em;
         font-weight: bold;
         color: #fff;
-        background: linear-gradient(135deg, #3b3b3b, #5c4b2e); /* 深色咖啡+低调金 */
+        background: linear-gradient(135deg, #3b3b3b, #5c4b2e);
         border: 2px solid #d4af37;
         border-radius: 25px;
         cursor: pointer;
@@ -73,6 +72,13 @@
         box-shadow: 0 0 10px rgba(212,175,55,0.5);
         transform: scale(0);
         animation: pop 0.5s forwards;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 25px rgba(212,175,55,0.9);
     }
 
     @keyframes pop {
@@ -86,7 +92,6 @@
         margin-top: 20px;
     }
 
-    /* 音符粒子 */
     .note {
         position: absolute;
         font-size: 16px;
@@ -103,9 +108,9 @@
 </style>
 </head>
 <body>
-<h1>许祭的随机音MAD（无敌版）</h1>
-<p>点击按钮抽取十个音MAD</p>
-<button id="openSites">抽卡!</button>
+<h1>许祭的随机音MAD(破解无敌版）</h1>
+<p>点击抽卡抽取十个随机音MAD</p>
+<button id="openSites">抽卡</button>
 <div id="cardsContainer" class="cards-container"></div>
 
 <script>
@@ -142,11 +147,13 @@ window.addEventListener('DOMContentLoaded', () => {
                         const card = document.createElement('div');
                         card.className = 'card';
                         card.title = random_site;
-                        container.appendChild(card);
 
-                        setTimeout(() => {
+                        // 点击卡片打开网页
+                        card.addEventListener('click', () => {
                             window.open(random_site, '_blank');
-                        }, i * 300);
+                        });
+
+                        container.appendChild(card);
                     }
                 } else {
                     alert("列表为空，请检查 JSON 文件。");
@@ -161,4 +168,3 @@ window.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
