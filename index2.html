@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>许祭的咖啡馆抽卡</title>
+<style>
+    /* 页面整体样式 */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Georgia', serif;
+        background: linear-gradient(180deg, #1a1a1a, #2b2b2b); /* 深色背景 */
+        color: #d4af37; /* 金色文字 */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        overflow: hidden;
+        height: 100vh;
+    }
+
+    h1 {
+        font-size: 3em;
+        margin-bottom: 10px;
+        color: #d4af37;
+        text-shadow: 0 0 5px #d4af37, 0 0 15px rgba(212,175,55,0.5);
+        animation: glow 3s ease-in-out infinite alternate;
+    }
+
+    p {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+        color: #f5deb3; /* 暖金色，咖啡感 */
+        text-shadow: 0 0 3px rgba(255, 255, 255, 0.2);
+    }
+
+    button {
+        padding: 15px 50px;
+        font-size: 1.3em;
+        font-weight: bold;
+        color: #fff;
+        background: linear-gradient(135deg, #3b3b3b, #5c4b2e); /* 深色咖啡+低调金 */
+        border: 2px solid #d4af37;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 15px rgba(212,175,55,0.7);
+        margin-bottom: 20px;
+    }
+
+    button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 25px rgba(212,175,55,0.9);
+    }
+
+    button:active {
+        transform: scale(0.95);
+        box-shadow: 0 0 15px rgba(212,175,55,0.7);
+    }
+
+    @keyframes glow {
+        from { text-shadow: 0 0 5px #d4af37, 0 0 15px rgba(212,175,55,0.5); }
+        to { text-shadow: 0 0 15px #d4af37, 0 0 30px rgba(212,175,55,0.7); }
+    }
+
+    .card {
+        width: 150px;
+        height: 220px;
+        background: linear-gradient(135deg, #3b3b3b, #5c4b2e);
+        border-radius: 15px;
+        margin: 10px;
+        display: inline-block;
+        box-shadow: 0 0 10px rgba(212,175,55,0.5);
+        transform: scale(0);
+        animation: pop 0.5s forwards;
+    }
+
+    @keyframes pop {
+        to { transform: scale(1); }
+    }
+
+    .cards-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    /* 音符粒子 */
+    .note {
+        position: absolute;
+        font-size: 16px;
+        color: #d4af37;
+        animation: floatUp linear forwards;
+        user-select: none;
+        pointer-events: none;
+    }
+
+    @keyframes floatUp {
+        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(-400px) rotate(360deg); opacity: 0; }
+    }
+</style>
+</head>
+<body>
+<h1>许祭的随机音MAD（无敌版）</h1>
+<p>点击按钮抽取十个音MAD</p>
+<button id="openSites">抽卡!</button>
+<div id="cardsContainer" class="cards-container"></div>
+
+<script>
+const notes = ['♪','♫','♬','♩'];
+
+function createNote() {
+    const note = document.createElement('div');
+    note.className = 'note';
+    note.innerText = notes[Math.floor(Math.random() * notes.length)];
+    note.style.left = Math.random() * window.innerWidth + 'px';
+    note.style.fontSize = 12 + Math.random() * 18 + 'px';
+    note.style.animationDuration = 2 + Math.random() * 2 + 's';
+    document.body.appendChild(note);
+    setTimeout(() => { note.remove(); }, 5000);
+}
+
+// 音符粒子持续生成
+setInterval(createNote, 300);
+
+window.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('openSites');
+    const container = document.getElementById('cardsContainer');
+
+    btn.addEventListener('click', () => {
+        container.innerHTML = ''; // 清空之前卡牌
+
+        fetch("sites.json")
+            .then(response => response.json())
+            .then(data => {
+                const sites = data.random_sites;
+                if (sites && sites.length > 0) {
+                    for (let i = 0; i < 10; i++) {
+                        const random_site = sites[Math.floor(Math.random() * sites.length)];
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.title = random_site;
+                        container.appendChild(card);
+
+                        setTimeout(() => {
+                            window.open(random_site, '_blank');
+                        }, i * 300);
+                    }
+                } else {
+                    alert("列表为空，请检查 JSON 文件。");
+                }
+            })
+            .catch(err => {
+                console.error("加载 JSON 出错：", err);
+                alert("加载失败，请检查配置。");
+            });
+    });
+});
+</script>
+</body>
+</html>
