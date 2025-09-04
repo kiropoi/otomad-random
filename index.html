@@ -18,20 +18,8 @@
         height: 100vh;
     }
 
-    h1 {
-        font-size: 3em;
-        margin-bottom: 10px;
-        color: #d4af37;
-        text-shadow: 0 0 5px #d4af37, 0 0 15px rgba(212,175,55,0.5);
-        animation: glow 3s ease-in-out infinite alternate;
-    }
-
-    p {
-        font-size: 1.2em;
-        margin-bottom: 20px;
-        color: #f5deb3;
-        text-shadow: 0 0 3px rgba(255, 255, 255, 0.2);
-    }
+    h1 { font-size: 3em; margin-bottom: 10px; color: #d4af37; text-shadow: 0 0 5px #d4af37, 0 0 15px rgba(212,175,55,0.5); animation: glow 3s ease-in-out infinite alternate; }
+    p { font-size: 1.2em; margin-bottom: 20px; color: #f5deb3; text-shadow: 0 0 3px rgba(255,255,255,0.2); }
 
     button {
         padding: 15px 50px;
@@ -46,26 +34,16 @@
         box-shadow: 0 0 15px rgba(212,175,55,0.7);
         margin-bottom: 20px;
     }
+    button:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(212,175,55,0.9); }
+    button:active { transform: scale(0.95); box-shadow: 0 0 15px rgba(212,175,55,0.7); }
 
-    button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 25px rgba(212,175,55,0.9);
-    }
+    @keyframes glow { from { text-shadow: 0 0 5px #d4af37,0 0 15px rgba(212,175,55,0.5);} to{ text-shadow:0 0 15px #d4af37,0 0 30px rgba(212,175,55,0.7);} }
 
-    button:active {
-        transform: scale(0.95);
-        box-shadow: 0 0 15px rgba(212,175,55,0.7);
-    }
-
-    @keyframes glow {
-        from { text-shadow: 0 0 5px #d4af37, 0 0 15px rgba(212,175,55,0.5); }
-        to { text-shadow: 0 0 15px #d4af37, 0 0 30px rgba(212,175,55,0.7); }
-    }
-
+    .cards-container { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
     .card {
         width: 150px;
         height: 220px;
-        background: linear-gradient(135deg, #3b3b3b, #5c4b2e);
+        background: url('cover.jpg') center/cover no-repeat; /* 统一缩略图 */
         border-radius: 15px;
         margin: 10px;
         display: inline-block;
@@ -77,59 +55,19 @@
         position: relative;
         overflow: hidden;
     }
+    .card:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(212,175,55,0.9); }
+    @keyframes pop { to { transform: scale(1); } }
 
-    .card:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 25px rgba(212,175,55,0.9);
-    }
+    .note { position: absolute; font-size: 16px; color: #d4af37; animation: floatUp linear forwards; user-select: none; pointer-events: none; }
+    @keyframes floatUp { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-400px) rotate(360deg); opacity: 0; } }
 
-    @keyframes pop {
-        to { transform: scale(1); }
-    }
-
-    .cards-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 20px;
-    }
-
-    .note {
-        position: absolute;
-        font-size: 16px;
-        color: #d4af37;
-        animation: floatUp linear forwards;
-        user-select: none;
-        pointer-events: none;
-    }
-
-    @keyframes floatUp {
-        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-        100% { transform: translateY(-400px) rotate(360deg); opacity: 0; }
-    }
-
-    /* 卡片点击闪光 */
-    .flash {
-        position: absolute;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: radial-gradient(circle, rgba(212,175,55,0.6) 0%, rgba(212,175,55,0) 70%);
-        border-radius: 15px;
-        pointer-events: none;
-        opacity: 0;
-        animation: flashAnim 0.5s forwards;
-    }
-
-    @keyframes flashAnim {
-        0% { opacity: 0; transform: scale(0.5); }
-        50% { opacity: 1; transform: scale(1.2); }
-        100% { opacity: 0; transform: scale(1); }
-    }
+    .flash { position: absolute; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle, rgba(212,175,55,0.6) 0%, rgba(212,175,55,0) 70%); border-radius: 15px; pointer-events:none; opacity:0; animation: flashAnim 0.5s forwards; }
+    @keyframes flashAnim { 0%{opacity:0; transform:scale(0.5);} 50%{opacity:1; transform:scale(1.2);} 100%{opacity:0; transform:scale(1);} }
 </style>
 </head>
 <body>
-<h1>许祭的随机音MAD(破解无敌版）</h1>
-<p>点击抽卡抽取十个随机音MAD</p>
+<h1>许祭的随机音MAD）破解汉化无敌版）</h1>
+<p>点击按钮抽抽取十个随机音MAD</p>
 <button id="openSites">抽卡!</button>
 <div id="cardsContainer" class="cards-container"></div>
 
@@ -145,62 +83,52 @@ function createNote(x, y) {
     note.style.fontSize = 12 + Math.random() * 18 + 'px';
     note.style.animationDuration = 1.5 + Math.random() * 1.5 + 's';
     document.body.appendChild(note);
-    setTimeout(() => { note.remove(); }, 2000);
+    setTimeout(()=>note.remove(),2000);
 }
 
-// 背景音符粒子
-setInterval(() => {
-    createNote(Math.random() * window.innerWidth, window.innerHeight);
-}, 400);
+setInterval(()=>{createNote(Math.random()*window.innerWidth, window.innerHeight);},400);
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded',()=>{
     const btn = document.getElementById('openSites');
     const container = document.getElementById('cardsContainer');
 
-    btn.addEventListener('click', () => {
-        container.innerHTML = ''; // 清空之前卡牌
+    btn.addEventListener('click', ()=>{
+        container.innerHTML='';
 
         fetch("sites.json")
-            .then(response => response.json())
-            .then(data => {
-                const sites = data.random_sites;
-                if (sites && sites.length > 0) {
-                    for (let i = 0; i < 10; i++) {
-                        const random_site = sites[Math.floor(Math.random() * sites.length)];
-                        const card = document.createElement('div');
-                        card.className = 'card';
-                        card.title = random_site;
+        .then(resp=>resp.json())
+        .then(data=>{
+            const sites = data.random_sites;
+            if(sites && sites.length>0){
+                for(let i=0;i<10;i++){
+                    const site = sites[Math.floor(Math.random()*sites.length)];
+                    const card = document.createElement('div');
+                    card.className='card';
+                    card.title = site.url;
 
-                        // 点击卡片效果
-                        card.addEventListener('click', (e) => {
-                            // 闪光效果
-                            const flash = document.createElement('div');
-                            flash.className = 'flash';
-                            card.appendChild(flash);
-                            setTimeout(() => flash.remove(), 500);
+                    // 点击卡片效果
+                    card.addEventListener('click',()=>{
+                        const flash = document.createElement('div');
+                        flash.className='flash';
+                        card.appendChild(flash);
+                        setTimeout(()=>flash.remove(),500);
 
-                            // 爆炸音符效果
-                            for(let j=0;j<5;j++){
-                                createNote(
-                                    card.offsetLeft + Math.random()*card.offsetWidth,
-                                    card.offsetTop + Math.random()*card.offsetHeight
-                                );
-                            }
+                        for(let j=0;j<5;j++){
+                            createNote(card.offsetLeft + Math.random()*card.offsetWidth, card.offsetTop + Math.random()*card.offsetHeight);
+                        }
 
-                            // 打开网页
-                            window.open(random_site, '_blank');
-                        });
+                        window.open(site.url,'_blank');
+                    });
 
-                        container.appendChild(card);
-                    }
-                } else {
-                    alert("列表为空，请检查 JSON 文件。");
+                    container.appendChild(card);
                 }
-            })
-            .catch(err => {
-                console.error("加载 JSON 出错：", err);
-                alert("加载失败，请检查配置。");
-            });
+            }else{
+                alert("列表为空，请检查 JSON 文件。");
+            }
+        }).catch(err=>{
+            console.error(err);
+            alert("加载失败，请检查配置。");
+        });
     });
 });
 </script>
