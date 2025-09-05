@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>许祭的随机音MAD</title>
+  <meta name="description" content="复古科幻风格的随机音MAD跳转页" />
+
+  <!-- 视觉样式（只用原生 CSS，无外链依赖） -->
+  <style>
+    :root {
+      --bg: #0b0c10;               /* 深太空背景 */
+      --fg: #e7e2d9;               /* 标题米白 */
+      --muted: #9aa1a8;            /* 次要文字 */
+      --accent: #e7b86c;           /* 复古金色 */
+      --neon: #9d7cff;             /* 霓虹紫 */
+      --neon-2: #48d1ff;           /* 霓虹蓝 */
+      --card-bg: #13151c;          /* 卡片底色 */
+      --grid: rgba(255,255,255,.06);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      color: var(--fg);
+      background:
+        /* 微弱星点 */
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.08) 50%, transparent 51%),
+        radial-gradient(1px 1px at 80% 70%, rgba(255,255,255,.07) 50%, transparent 51%),
+        radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,.05) 50%, transparent 51%),
+        /* 网格 */
+        linear-gradient(to right, var(--grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid) 1px, transparent 1px),
+        var(--bg);
+      background-size: auto, auto, auto, 80px 80px, 80px 80px, auto;
+      background-position: 0 0, 0 0, 0 0, -2px -2px, -2px -2px, 0 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, PingFang SC, Hiragino Sans GB, "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* 扫描线+暗角 */
+    .fx-overlay::before,
+    .fx-overlay::after {
+      content: "";
+      position: fixed; inset: 0; pointer-events: none;
+    }
+    .fx-overlay::before {
+      background-image: linear-gradient(rgba(255,255,255,.03) 50%, rgba(0,0,0,0) 50%);
+      background-size: 100% 3px;
+      mix-blend-mode: overlay;
+      opacity: .25;
+    }
+    .fx-overlay::after {
+      box-shadow: inset 0 0 200px rgba(0,0,0,.65);
+    }
+
+    header {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px 24px;
+      position: relative;
+    }
+    .eyebrow {
+      letter-spacing: .3em;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      opacity: .85;
+    }
+    .title {
+      margin: 8px 0 10px;
+      font-size: clamp(44px, 8vw, 120px);
+      line-height: .9;
+      font-weight: 800;
+      letter-spacing: .02em;
+      text-wrap: balance;
+    }
+    .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: clamp(14px, 2.2vw, 18px);
+    }
+
+    /* 霓虹分割线 */
+    .neon-rule {
+      height: 2px; width: 100%; margin: 28px 0 0;
+      background: linear-gradient(90deg, transparent, var(--neon), var(--neon-2), transparent);
+      filter: blur(.2px);
+      opacity: .9;
+    }
+
+    /* 主区域 */
+    .stage {
+      max-width: 1200px;
+      margin: 20px auto 80px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+      position: relative;
+    }
+
+    /* 信息条 */
+    .info-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 16px 18px;
+      backdrop-filter: blur(6px);
+    }
+    #count { margin: 0; font-size: 16px; color: #fff; }
+
+    /* 霓虹按钮 */
+    .btn {
+      --glow: drop-shadow(0 0 14px var(--neon)) drop-shadow(0 0 28px var(--neon-2));
+      position: relative;
+      appearance: none; border: none; cursor: pointer;
+      font-weight: 700; font-size: 16px; letter-spacing: .08em;
+      padding: 14px 26px; border-radius: 14px; text-transform: uppercase;
+      color: #0b0c10; background: linear-gradient(135deg, #fff 0%, #f1f1f1 100%);
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+      filter: var(--glow);
+    }
+    .btn::after { /* 角部切边描边 */
+      content: ""; position: absolute; inset: 0; border-radius: 14px;
+      padding: 1px; background: linear-gradient(135deg, var(--neon), var(--neon-2));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      pointer-events: none;
+    }
+    .btn:active { transform: translateY(1px); }
+
+    /* 漂浮卡片 */
+    .cards {
+      position: relative; height: 400px; perspective: 1200px;
+    }
+    @media (min-width: 900px){ .cards{ height: 520px; } }
+
+    .card {
+      position: absolute; top: 50%; left: 50%; translate: -50% -50%;
+      width: min(360px, 80vw); aspect-ratio: 3 / 4; border-radius: 18px;
+      background: var(--card-bg);
+      overflow: hidden; border: 1px solid rgba(255,255,255,.14);
+      transform-style: preserve-3d;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      animation: drift 16s ease-in-out infinite;
+    }
+    .card:nth-child(1){ transform: translate3d(-260px,-30px,0) rotateZ(-6deg); animation-delay: -2s; }
+    .card:nth-child(2){ transform: translate3d(260px,40px,0) rotateZ(8deg); animation-delay: -6s; }
+
+    @keyframes drift {
+      0%,100%{ transform: translate3d(var(--x,0), var(--y,0), 0) rotateZ(var(--rz,0)); }
+      50%{ transform: translate3d(calc(var(--x,0) * 1.06), calc(var(--y,0) * 1.06), 0) rotateZ(calc(var(--rz,0) * 1.08)); }
+    }
+
+    .card::before { /* 霓虹相框边 */
+      content: ""; position: absolute; inset: 0; border-radius: 18px;
+      padding: 2px; background: linear-gradient(135deg, var(--neon), var(--neon-2));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      filter: drop-shadow(0 0 14px rgba(157,124,255,.45));
+      pointer-events: none;
+    }
+    .card img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .95; }
+    .card .caption {
+      position: absolute; inset: auto 10px 10px 10px; font-size: 12px;
+      letter-spacing: .18em; text-transform: uppercase; color: #cfd6ff; opacity: .9;
+      background: rgba(10,12,18,.45); padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,.1);
+      backdrop-filter: blur(4px);
+    }
+
+    /* 页脚 */
+    footer { color: var(--muted); text-align: center; padding: 40px 24px 60px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+
+<body class="fx-overlay">
+  <header aria-label="标题区">
+    <div class="eyebrow">// OTAMAD</div>
+    <h1 class="title" style="margin:0">RANDOM OTOMAD</h1>
+    <p class="sub">许祭的随机音MAD · 点击按钮<span style="white-space:nowrap;">随机观看</span>一个音MAD</p>
+    <div class="neon-rule" role="presentation"></div>
+  </header>
+
+  <main class="stage" aria-live="polite">
+    <section class="info-bar" aria-label="信息栏">
+      <h2 id="count" aria-live="polite">正在加载中…</h2>
+      <button id="go" class="btn" type="button" aria-label="随机音MAD生活">出发</button>
+    </section>
+
+    <!-- 漂浮的示例卡片（替换为你的封面图即可）。
+         如果不想显示，删除 .cards 整段即可，不影响功能。 -->
+    <section class="cards" aria-hidden="true">
+      <figure class="card" style="--x:-260px; --y:-30px; --rz:-6deg">
+        <!-- 可替换为你的图片路径，例如 covers/01.jpg -->
+        <img alt="复古科幻插画一" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='1200'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop stop-color='%23131924'/%3E%3Cstop offset='.5' stop-color='%2325314a'/%3E%3Cstop offset='1' stop-color='%23405f7b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23g)' width='100%25' height='100%25'/%3E%3Ccircle cx='75' cy='140' r='6' fill='white' fill-opacity='.65'/%3E%3Crect x='120' y='180' width='660' height='860' rx='28' ry='28' fill='rgba(255,255,255,.06)' stroke='rgba(255,255,255,.18)'/%3E%3C/svg%3E" />
+        <figcaption class="caption">Fusion // Style</figcaption>
+      </figure>
+      <figure class="card" style="--x:260px; --y:40px; --rz:8deg">
+        <img alt="复古科幻插画二" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='1200'%3E%3Cdefs%3E%3ClinearGradient id='g2' x1='0' x2='1'%3E%3Cstop stop-color='%231a1d2a'/%3E%3Cstop offset='.5' stop-color='%23304451'/%3E%3Cstop offset='1' stop-color='%236c4b2e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23g2)' width='100%25' height='100%25'/%3E%3Ccircle cx='820' cy='210' r='12' fill='white' fill-opacity='.7'/%3E%3Crect x='80' y='140' width='740' height='920' rx='28' ry='28' fill='rgba(255,255,255,.06)' stroke='rgba(255,255,255,.18)'/%3E%3C/svg%3E" />
+        <figcaption class="caption">Styles // Magic</figcaption>
+      </figure>
+    </section>
+  </main>
+
+  <footer>
+    <small>©<span id="year"></span> 许祭  ❤  OTAMAD.</small>
+  </footer>
+
+  <!-- 交互脚本：保持你原有逻辑，并增加轻微的视差倾斜效果 -->
+  <script>
+    // ——— 数据加载（与原文件一致） ———
+    let sites = [];
+    fetch("sites.json")
+      .then(r => r.json())
+      .then(data => {
+        sites = data.random_sites || [];
+        const text = sites.length > 0 ? `随机库现收录 ${sites.length} 个音MAD，包括已失效（正在排查）` : "暂未收录任何链接";
+        document.getElementById("count").textContent = text;
+      })
+      .catch(err => {
+        console.error("加载 JSON 出错：", err);
+        document.getElementById("count").textContent = "加载失败，请检查配置。";
+      });
+
+    function goRandom(){
+      if (sites.length > 0) {
+        const url = sites[Math.floor(Math.random() * sites.length)];
+        window.open(url, "_blank");
+      }
+    }
+
+    document.getElementById("go").addEventListener("click", goRandom);
+
+    // ——— 漂浮卡片交互：跟随鼠标轻微倾斜 & 视差 ———
+    const cards = document.querySelectorAll('.card');
+    const maxTilt = 8; // 最大倾斜度数
+    function tilt(e){
+      const { innerWidth: w, innerHeight: h } = window;
+      const x = (e.clientX / w - 0.5) * 2; // -1 ~ 1
+      const y = (e.clientY / h - 0.5) * 2;
+      cards.forEach((el, i) => {
+        const depth = (i + 1) * 8; // 视差深度
+        el.style.transform = `translate3d(calc(var(--x,0) + ${x * depth}px), calc(var(--y,0) + ${y * depth}px), 0) rotateX(${ -y * maxTilt }deg) rotateY(${ x * maxTilt }deg) rotateZ(var(--rz,0))`;
+      });
+    }
+    window.addEventListener('mousemove', tilt);
+
+    // 年份
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
